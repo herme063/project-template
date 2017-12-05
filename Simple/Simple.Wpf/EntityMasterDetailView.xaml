@@ -8,7 +8,8 @@
              DataContext="{Binding EntityMasterDetail, Source={StaticResource Locator}}">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <command:EventToCommand Command="{Binding EntityMasterDetail.LoadCommand, Source={StaticResource Locator}}" />
+            <command:EventToCommand Command="{Binding EntityMasterDetail.LoadCommand, Source={StaticResource Locator}}" 
+                                    PassEventArgsToCommand="False" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     
@@ -66,7 +67,7 @@
                            Target="{Binding ElementName=Name}" />
                     <TextBox x:Name="Name"
                              Style="{StaticResource FormField}"
-                             Text="{Binding SelectedItem.Name, Mode=TwoWay, NotifyOnValidationError=True}" />
+                             Text="{Binding SelectedItem.Name, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
             </GroupBox>
             

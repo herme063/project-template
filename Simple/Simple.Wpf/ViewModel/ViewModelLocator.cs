@@ -22,13 +22,13 @@ namespace Simple.Wpf.ViewModel
     /// </summary>
     public class ViewModelLocator
     {
-        public MainViewModel Main => Bootstrapper.Container.Get<MainViewModel>();
-        public EntityMasterDetailViewModel EntityMasterDetail => Bootstrapper.Container.Get<EntityMasterDetailViewModel>();
+        public MainViewModel Main => Bootstrapper.Resolve<MainViewModel>();
+        public EntityMasterDetailViewModel EntityMasterDetail => Bootstrapper.Resolve<EntityMasterDetailViewModel>();
 
         public static void Cleanup()
         {
-            Bootstrapper.Container.Get<MainViewModel>().Cleanup();
-            Bootstrapper.Container.Get<EntityMasterDetailViewModel>().Cleanup();
+            Bootstrapper.Resolve<MainViewModel>().Cleanup();
+            Bootstrapper.Resolve<EntityMasterDetailViewModel>().Cleanup();
         }
     }
 }

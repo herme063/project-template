@@ -8,16 +8,18 @@ using MvvmValidation;
 
 namespace Simple.Wpf.Util
 {
+    /// <summary>
+    /// Loosely based on https://github.com/pglazkov/MvvmValidation/blob/master/Examples/FormValidationExample/Infrastructure/ValidatableViewModelBase.cs
+    /// </summary>
+    /// <seealso cref="GalaSoft.MvvmLight.ObservableObject" />
+    /// <seealso cref="System.ComponentModel.INotifyDataErrorInfo" />
     public abstract class ValidatableObservableObject : 
         ObservableObject,
+        IValidatable,
         INotifyDataErrorInfo
     {
         private readonly ValidationHelper _validator;
         private readonly NotifyDataErrorInfoAdapter _notifyDataErrorInfoAdapter;
-
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-
-        public bool HasErrors => _notifyDataErrorInfoAdapter.HasErrors;
 
         protected ValidationHelper Validator => _validator;
 
@@ -25,14 +27,7 @@ namespace Simple.Wpf.Util
         {
             _validator = new ValidationHelper();
             _notifyDataErrorInfoAdapter = new NotifyDataErrorInfoAdapter(_validator);
-            ErrorsChanged += OnErrorsChanged;
-        }
-
-        public IEnumerable GetErrors(string propertyName) => _notifyDataErrorInfoAdapter.GetErrors(propertyName);
-
-        public async Task<ValidationResult> ValidateAsync()
-        {
-            return await _validator.ValidateAllAsync();
+            _notifyDataErrorInfoAdapter.ErrorsChanged += OnErrorsChanged;
         }
 
         protected bool SetNValidate<T>(Expression<Func<T>> propertyExpression, ref T field, T newValue)
@@ -45,7 +40,30 @@ namespace Simple.Wpf.Util
 
         private void OnErrorsChanged(object sender, DataErrorsChangedEventArgs e)
         {
-            RaisePropertyChanged(() => HasErrors);
+            RaisePropertyChanged(e.PropertyName);
         }
+
+        #region IValidatable
+
+        public Task<ValidationResult> Validate()
+        {
+            return _validator.ValidateAllAsync();
+        }
+
+        #endregion IValidatable
+
+        #region INotifyDataErrorInfo
+
+        public IEnumerable GetErrors(string propertyName) => _notifyDataErrorInfoAdapter.GetErrors(propertyName);
+
+        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged
+        {
+            add { _notifyDataErrorInfoAdapter.ErrorsChanged += value; }
+            remove { _notifyDataErrorInfoAdapter.ErrorsChanged += value; }
+        }
+
+        public bool HasErrors => _notifyDataErrorInfoAdapter.HasErrors;
+
+        #endregion INotifyDataErrorInfo
     }
 }

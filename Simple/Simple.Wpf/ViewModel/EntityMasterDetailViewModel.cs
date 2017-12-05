@@ -16,12 +16,12 @@ namespace Simple.Wpf.ViewModel
     public class EntityMasterDetailViewModel : ViewModelBase
     {
         private readonly IEntityService _service;
+        private readonly IDialogService _dialog;
         private EntityObservable _selectedItem;
         private ObservableCollection<EntityObservable> _items;
         private ICommand _saveCommand;
         private ICommand _loadCommand;
         private ICommand _removeCommand;
-        private readonly IDialogService _dialog;
 
         public EntityObservable SelectedItem
         {
@@ -42,8 +42,8 @@ namespace Simple.Wpf.ViewModel
         public ICommand LoadCommand => _loadCommand ?? (_loadCommand = new RelayCommand(async () => await LoadAsync()));
 
         public EntityMasterDetailViewModel(
-            IEntityService service,
-            IDialogService dialog)
+            IDialogService dialog,
+            IEntityService service)
         {
             _service = service;
             _dialog = dialog;
@@ -72,7 +72,7 @@ namespace Simple.Wpf.ViewModel
 
         private async Task SaveAsync()
         {
-            ValidationResult validation = await SelectedItem.ValidateAsync();
+            ValidationResult validation = await SelectedItem.Validate();
             if (validation.IsValid)
             {
                 var entity = new Model.Entity();

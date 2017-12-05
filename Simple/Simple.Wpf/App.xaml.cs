@@ -14,12 +14,12 @@ namespace Simple.Wpf
         {
             base.OnStartup(e);
             DispatcherHelper.Initialize();
-            Bootstrapper.Container.Get<MainWindow>().Show();
+            Bootstrapper.Resolve<MainWindow>().Show();
         }
 
         private void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            var logger = Bootstrapper.Container.Get<ILogger>();
+            var logger = Bootstrapper.Resolve<ILogger>();
             logger.Fatal(e.Exception, "unhandled exception occured");
         }
     }
