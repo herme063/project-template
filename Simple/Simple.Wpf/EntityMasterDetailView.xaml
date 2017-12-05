@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="Simple.Wpf.EntityMasterDetailView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Simple.Wpf"
+             xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+             DataContext="{Binding EntityMasterDetail, Source={StaticResource Locator}}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <command:EventToCommand Command="{Binding EntityMasterDetail.LoadCommand, Source={StaticResource Locator}}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.Resources>
+                <xcdg:DataGridCollectionViewSource x:Key="DataSource"
+                                                   Source="{Binding Items}" />
+            </Grid.Resources>
+
+            <xcdg:DataGridControl AutoCreateColumns="False" 
+                                  ItemsSource="{Binding DataSource}">
+                <xcdg:DataGridControl.Columns>
+                    <xcdg:Column FieldName="Id"
+                                 Width="30"
+                                 MinWidth="30"
+                                 MaxWidth="30">
+                        <xcdg:Column.CellContentTemplate>
+                            <DataTemplate>
+                                <Button Content="X"
+                                        ToolTip="Remove"
+                                        Command="{Binding EntityMasterDetail.RemoveCommand, Source={StaticResource Locator}}"
+                                        CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </xcdg:Column.CellContentTemplate>
+                    </xcdg:Column>
+                    <xcdg:Column FieldName="Name" />
+                </xcdg:DataGridControl.Columns>
+            </xcdg:DataGridControl>
+        </Grid>
+
+        <GridSplitter Grid.Column="1" 
+                      Width="5"
+                      HorizontalAlignment="Stretch" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <GroupBox Grid.Row="0" 
+                      Style="{StaticResource FormFieldSet}"
+                      Header="Attributes">
+                <StackPanel Orientation="Vertical">
+                    <Label Style="{StaticResource FormLabel}"
+                           Content="_Name"
+                           Target="{Binding ElementName=Name}" />
+                    <TextBox x:Name="Name"
+                             Style="{StaticResource FormField}"
+                             Text="{Binding SelectedItem.Name, Mode=TwoWay, NotifyOnValidationError=True}" />
+                </StackPanel>
+            </GroupBox>
+            
+            <TextBlock Grid.Row="1"
+                       Text="{Binding ValidationSummary}" />
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal">
+                <Button Style="{StaticResource FormButton}"
+                        Content="Save"
+                        Command="{Binding EntityMasterDetail.SaveCommand, Source={StaticResource Locator}}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
