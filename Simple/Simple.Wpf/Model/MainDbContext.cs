@@ -18,12 +18,6 @@ namespace Simple.Wpf.Model
             Configuration.ProxyCreationEnabled = enabledProxyCreation;
         }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            Entity.ConfigureDbModel(modelBuilder);
-            base.OnModelCreating(modelBuilder);
-        }
-
         private class MainDbInitializer : IDatabaseInitializer<MainDbContext> 
         {
             public void InitializeDatabase(MainDbContext context)

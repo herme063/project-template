@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Simple.Wpf" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              d1p1:Ignorable="d" 
+             StartupUri="MainWindow.xaml"
              xmlns:d1p1="http://schemas.openxmlformats.org/markup-compatibility/2006"
              DispatcherUnhandledException="OnDispatcherUnhandledException">
     <Application.Resources>
@@ -11,10 +12,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Theme/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            
+
             <vm:ViewModelLocator x:Key="Locator" 
-                           d:IsDataSource="True" 
-                           xmlns:vm="clr-namespace:Simple.Wpf.ViewModel" />
+                                 d:IsDataSource="True" 
+                                 xmlns:vm="clr-namespace:Simple.Wpf.ViewModel" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

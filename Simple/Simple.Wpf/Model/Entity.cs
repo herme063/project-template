@@ -1,15 +1,14 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Simple.Wpf.Model
 {
+    [Table("ENTITIES")]
     public class Entity
     {
-        public static void ConfigureDbModel(DbModelBuilder builder)
-        {
-            builder.Entity<Entity>().HasKey(e => e.Id);
-        }
-
+        [Key]
         public int Id { get; set; }
+
         public string Name { get; set; }
     }
 }

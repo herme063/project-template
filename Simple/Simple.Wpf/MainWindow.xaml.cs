@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Simple.Wpf.ViewModel;
 
@@ -10,16 +9,9 @@ namespace Simple.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly IDialogService _dialogService;
-        private readonly IMessenger _messenger;
-
-        public MainWindow(
-            IMessenger messenger, 
-            IDialogService dialogService)
+        public MainWindow()
         {
             InitializeComponent();
-            _messenger = messenger;
-            _dialogService = dialogService;
         }
 
         private void ExitMenuClick(object sender, RoutedEventArgs e)
@@ -31,10 +23,11 @@ namespace Simple.Wpf
         {
             e.Cancel = true;
 
-            bool confirmedExit = await _dialogService.ShowMessage("Are you sure to exit?", "Confirm Exit", "Yes", "No", null);
+            IDialogService dialogService = ViewModelLocator.Current.Resolve<IDialogService>();
+            bool confirmedExit = await dialogService.ShowMessage("Are you sure to exit?", "Confirm Exit", "Yes", "No", null);
             if (confirmedExit)
             {
-                ViewModelLocator.Cleanup();
+                ViewModelLocator.Current.Cleanup();
                 Application.Current.Shutdown();
             }
         }

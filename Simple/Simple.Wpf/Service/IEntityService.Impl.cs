@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using Simple.Wpf.Model;
@@ -21,7 +22,7 @@ namespace Simple.Wpf.Service
         {
             using (var context = new MainDbContext())
             {
-                return await Task.Run(() => context.Entities.AsNoTracking().ToList());
+                return await context.Entities.ToListAsync();
             }
         }
 
@@ -43,7 +44,16 @@ namespace Simple.Wpf.Service
         {
             using (var context = new MainDbContext())
             {
-                return await Task.Run(() => context.Entities.Any(e => e.Id != entityId && e.Name.ToUpperInvariant() == entityName.ToUpperInvariant()));
+                return await context.Entities.AnyAsync(e => e.Id != entityId && e.Name == entityName);
+            }
+        }
+
+        public async Task<Entity> GetById(int entityId)
+        {
+            using (var context = new MainDbContext())
+            {
+                return await context.Entities.SingleOrDefaultAsync(e => e.Id == entityId) 
+                    ?? new Entity();
             }
         }
     }

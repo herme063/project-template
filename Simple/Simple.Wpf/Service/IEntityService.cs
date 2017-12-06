@@ -11,5 +11,6 @@ namespace Simple.Wpf.Service
         Task<Entity> SaveAsync(Entity entity);
         Task DeleteAsync(int entityId);
         Task<bool> NameDuplicateAsync(int entityId, string entityName);
+        Task<Entity> GetById(int entityId);
     }
 }

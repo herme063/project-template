@@ -22,9 +22,11 @@
             This is the last children so that it is displayed on top of everything.
             This is by default modal.
             -->
-            <xctk:WindowContainer x:Name="DialogContainer"
+            <xctk:WindowContainer x:Name="DialogContainer" 
                                   HorizontalAlignment="Stretch" 
-                                  VerticalAlignment="Stretch" />
+                                  VerticalAlignment="Stretch">
+                <xctk:MessageBox x:Name="DialogBox" />
+            </xctk:WindowContainer>
         </Grid>
     </DockPanel>
 </Window>

@@ -17,16 +17,20 @@ namespace Simple.Wpf.ViewModel
     {
         private readonly IEntityService _service;
         private readonly IDialogService _dialog;
-        private EntityObservable _selectedItem;
+        private bool _isBusy;
+        private EntityObservable _editItem;
         private ObservableCollection<EntityObservable> _items;
+        private string _validationSummary;
+        private ICommand _editCommand;
         private ICommand _saveCommand;
+        private ICommand _newCommand;
         private ICommand _loadCommand;
         private ICommand _removeCommand;
 
-        public EntityObservable SelectedItem
+        public EntityObservable EditItem
         {
-            get { return _selectedItem; }
-            set { Set(() => SelectedItem, ref _selectedItem, value); }
+            get { return _editItem; }
+            set { Set(() => EditItem, ref _editItem, value); }
         }
 
         public ObservableCollection<EntityObservable> Items
@@ -35,11 +39,27 @@ namespace Simple.Wpf.ViewModel
             set { Set(() => Items, ref _items, value); }
         }
 
+        public string ValidationSummary
+        {
+            get { return _validationSummary; }
+            set { Set(() => ValidationSummary, ref _validationSummary, value); }
+        }
+
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set { Set(() => IsBusy, ref _isBusy, value); }
+        }
+
         public ICommand SaveCommand => _saveCommand ?? (_saveCommand = new RelayCommand(async () => await SaveAsync()));
 
         public ICommand RemoveCommand => _removeCommand ?? (_removeCommand = new RelayCommand<int>(async (id) => await RemoveAsync(id)));
 
+        public ICommand EditCommand => _editCommand ?? (_editCommand = new RelayCommand<int>(async (id) => await EditAsync(id)));
+
         public ICommand LoadCommand => _loadCommand ?? (_loadCommand = new RelayCommand(async () => await LoadAsync()));
+
+        public ICommand NewCommand => _newCommand ?? (_newCommand = new RelayCommand(async () => await NewAsync()));
 
         public EntityMasterDetailViewModel(
             IDialogService dialog,
@@ -58,32 +78,74 @@ namespace Simple.Wpf.ViewModel
 
         private async Task LoadAsync(bool resetEntry = true)
         {
-            List<Model.Entity> entities = await _service.AllAsync();
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
+                IsBusy = true;
+            });
+
+            List<Model.Entity> entities = await _service.AllAsync();
+
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                IsBusy = false;
                 Items = new ObservableCollection<EntityObservable>(entities.Select(e => new EntityObservable(e, _service)));
 
                 if (resetEntry)
                 {
-                    SelectedItem = new EntityObservable(_service);
+                    EditItem = new EntityObservable(_service);
                 }
             });
         }
 
+        private async Task EditAsync(int itemId)
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                IsBusy = true;
+            });
+
+            Model.Entity entity = await _service.GetById(itemId);
+
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                IsBusy = false;
+                EditItem = new EntityObservable(entity, _service);
+            });
+        }
+
+        private async Task NewAsync()
+        {
+            if (EditItem?.Id > 0)
+            {
+                bool confirmed = await _dialog.ShowMessage(
+                    "Discard current changes?", 
+                    "Confirm New Item", 
+                    "Yes", 
+                    "No", 
+                    null);
+                if (confirmed)
+                {
+                    await EditAsync(0);
+                }
+            }
+        }
+
         private async Task SaveAsync()
         {
-            ValidationResult validation = await SelectedItem.Validate();
+            ValidationSummary = string.Empty;
+
+            ValidationResult validation = await EditItem.Validate();
             if (validation.IsValid)
             {
                 var entity = new Model.Entity();
-                SelectedItem.Apply(ref entity);
+                EditItem.Apply(ref entity);
 
                 Model.Entity savedEntity = await _service.SaveAsync(entity);
                 await LoadAsync();
             }
             else
             {
-                // TODO: Raise validation
+                ValidationSummary = validation.ToString(new ValidationSummaryFormatter());
             }
         }
 
