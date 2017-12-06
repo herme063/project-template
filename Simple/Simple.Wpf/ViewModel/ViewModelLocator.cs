@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Ninject;
 using NLog;
+using Simple.Wpf.View;
 using Simple.Wpf.Service;
 
 namespace Simple.Wpf.ViewModel

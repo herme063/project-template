@@ -4,7 +4,7 @@ using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 
-namespace Simple.Wpf
+namespace Simple.Wpf.View
 {
     /// <summary>
     /// This implementation uses the wpf toolkit message box.
@@ -31,7 +31,7 @@ namespace Simple.Wpf
 
         public Task ShowMessage(string message, string title)
         {
-            return ShowMessage(message, title, "Ok", null);
+            return ShowMessage(message, title, Resource.Strings.Button_Ok, null);
         }
 
         public Task ShowMessage(string message, string title, string buttonText, Action afterHideCallback)
@@ -63,8 +63,8 @@ namespace Simple.Wpf
 
             // UI
             DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                DialogBox.YesButtonContent = buttonConfirmText ?? "Yes";
-                DialogBox.NoButtonContent = buttonCancelText ?? "No";
+                DialogBox.YesButtonContent = buttonConfirmText ?? Resource.Strings.Button_Yes;
+                DialogBox.NoButtonContent = buttonCancelText ?? Resource.Strings.Button_No;
                 DialogBox.ShowMessageBox(
                     message, 
                     title, 

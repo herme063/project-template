@@ -1,7 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
+using System.Windows.Input;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
 
 namespace Simple.Wpf.ViewModel
 {
+
     /// <summary>
     /// This class contains properties that the main View can data bind to.
     /// <para>
@@ -16,6 +23,28 @@ namespace Simple.Wpf.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private CultureInfo _culture;
+        private List<CultureInfo> _cultures;
+
+        public List<CultureInfo> Cultures
+        {
+            get { return _cultures; }
+            set { Set(() => Cultures, ref _cultures, value); }
+        }
+
+        public CultureInfo Culture
+        {
+            get { return _culture; }
+            set
+            {
+                if (Set(() => Culture, ref _culture, value))
+                {
+                    WPFLocalizeExtension.Engine.LocalizeDictionary.Instance.SetCurrentThreadCulture = true;
+                    WPFLocalizeExtension.Engine.LocalizeDictionary.Instance.Culture = value;
+                }
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
@@ -29,12 +58,23 @@ namespace Simple.Wpf.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
+            Cultures = new List<CultureInfo>
+            {
+                new CultureInfo("en-US"),
+                new CultureInfo("fr-FR")
+            };
+            Culture = Thread.CurrentThread.CurrentUICulture;
         }
 
         public override void Cleanup()
         {
             // TODO: Cleanup logic
             base.Cleanup();
+        }
+
+        private void SwitchCulture(CultureInfo ci)
+        {
+            Culture = ci;
         }
     }
 }

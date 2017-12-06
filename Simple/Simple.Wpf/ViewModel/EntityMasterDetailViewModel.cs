@@ -92,6 +92,7 @@ namespace Simple.Wpf.ViewModel
 
                 if (resetEntry)
                 {
+                    ValidationSummary = string.Empty;
                     EditItem = new EntityObservable(_service);
                 }
             });
@@ -109,6 +110,7 @@ namespace Simple.Wpf.ViewModel
             DispatcherHelper.CheckBeginInvokeOnUI(() =>
             {
                 IsBusy = false;
+                ValidationSummary = string.Empty;
                 EditItem = new EntityObservable(entity, _service);
             });
         }
@@ -118,10 +120,10 @@ namespace Simple.Wpf.ViewModel
             if (EditItem?.Id > 0)
             {
                 bool confirmed = await _dialog.ShowMessage(
-                    "Discard current changes?", 
-                    "Confirm New Item", 
-                    "Yes", 
-                    "No", 
+                    Resource.Strings.Message_ConfirmDiscard,
+                    Resource.Strings.Title_ConfirmDiscard,
+                    Resource.Strings.Button_Yes,
+                    Resource.Strings.Button_No, 
                     null);
                 if (confirmed)
                 {
@@ -145,17 +147,17 @@ namespace Simple.Wpf.ViewModel
             }
             else
             {
-                ValidationSummary = validation.ToString(new ValidationSummaryFormatter());
+                ValidationSummary = validation.ToString(new ValidationSummaryXamlFormatter());
             }
         }
 
         private async Task RemoveAsync(int id)
         {
             bool removeConfirmed = await _dialog.ShowMessage(
-                "Are you sure to remove this entity?",
-                "Confirm Removal",
-                "Yes",
-                "No",
+                Resource.Strings.Message_ConfirmDelete,
+                Resource.Strings.Title_ConfirmDelete,
+                Resource.Strings.Button_Yes,
+                Resource.Strings.Button_No,
                 null);
             if (removeConfirmed)
             {
@@ -181,11 +183,11 @@ namespace Simple.Wpf.ViewModel
             public EntityObservable(IEntityService service)
             {
                 _service = service;
-                Validator.AddRequiredRule(() => Name, "Name required");
+                Validator.AddRequiredRule(() => Name, Resource.Strings.Message_IsRequired);
                 Validator.AddAsyncRule(() => Name, async () =>
                 { 
                     bool nameDuplicacy = await _service.NameDuplicateAsync(_id, Name);
-                    return RuleResult.Assert(!nameDuplicacy, "Name already in use");
+                    return RuleResult.Assert(!nameDuplicacy, Resource.Strings.Message_AlreadyInUse);
                 });
             }
 

@@ -1,7 +1,11 @@
-﻿<UserControl x:Class="Simple.Wpf.EntityMasterDetailView"
+﻿<UserControl x:Class="Simple.Wpf.View.EntityMasterDetailView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:Simple.Wpf"
+             xmlns:lex="http://wpflocalizeextension.codeplex.com"
+             lex:LocalizeDictionary.DesignCulture="en"
+             lex:ResxLocalizationProvider.DefaultAssembly="Simple.Wpf"
+             lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+             xmlns:local="clr-namespace:Simple.Wpf.View"
              xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -15,7 +19,7 @@
     </i:Interaction.Triggers>
 
     <xctk:BusyIndicator IsBusy="{Binding IsBusy}"
-                        BusyContent="Loading...">
+                        BusyContent="{lex:Loc Message_Loading}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*" />
@@ -44,20 +48,21 @@
                                                 Padding="2 1 2 1"
                                                 Margin="0 0 2 0"
                                                 Width="25"
-                                                ToolTip="Remove"
+                                                ToolTip="{lex:Loc Hint_Remove}"
                                                 Command="{Binding EntityMasterDetail.RemoveCommand, Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding}" />
                                         <Button Content="E"
                                                 Padding="2 1 2 1"
                                                 Width="25"
-                                                ToolTip="Edit"
+                                                ToolTip="{lex:Loc Hint_Edit}"
                                                 Command="{Binding EntityMasterDetail.EditCommand, Source={StaticResource Locator}}"
                                                 CommandParameter="{Binding}" />
                                     </StackPanel>
                                 </DataTemplate>
                             </xcdg:Column.CellContentTemplate>
                         </xcdg:Column>
-                        <xcdg:Column Title="Name" FieldName="Name" />
+                        <xcdg:Column Title="{lex:Loc Label_Name}" 
+                                     FieldName="Name" />
                     </xcdg:DataGridControl.Columns>
                 </xcdg:DataGridControl>
             </Grid>
@@ -75,10 +80,10 @@
 
                 <GroupBox Grid.Row="0" 
                           Style="{StaticResource FormFieldSet}"
-                          Header="Attributes">
+                          Header="{lex:Loc Label_Attributes}">
                     <StackPanel Orientation="Vertical">
                         <Label Style="{StaticResource FormLabel}"
-                               Content="_Name"
+                               Content="{lex:Loc Label_Name}"
                                Target="{Binding ElementName=Name}" />
                         <TextBox x:Name="Name"
                                  Style="{StaticResource FormField}"
@@ -86,18 +91,17 @@
                     </StackPanel>
                 </GroupBox>
 
-                <ScrollViewer Grid.Row="1">
-                    <TextBlock Style="{StaticResource FormValidationSummary}"
-                               Text="{Binding ValidationSummary}" />
-                </ScrollViewer>
+                <xctk:RichTextBox Grid.Row="1"
+                                  Style="{StaticResource FormValidationSummary}"
+                                  Text="{Binding ValidationSummary}"/>
 
                 <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
                     <Button Style="{StaticResource FormButton}"
-                            Content="Save"
+                            Content="{lex:Loc Button_Save}"
                             Command="{Binding EntityMasterDetail.SaveCommand, Source={StaticResource Locator}}" />
                     <Button Style="{StaticResource FormButton}"
-                            Content="New"
+                            Content="{lex:Loc Button_New}"
                             Command="{Binding EntityMasterDetail.NewCommand, Source={StaticResource Locator}}" />
                 </StackPanel>
             </Grid>

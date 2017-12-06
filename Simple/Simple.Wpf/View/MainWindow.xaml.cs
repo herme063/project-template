@@ -2,7 +2,7 @@
 using GalaSoft.MvvmLight.Views;
 using Simple.Wpf.ViewModel;
 
-namespace Simple.Wpf
+namespace Simple.Wpf.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -24,7 +24,12 @@ namespace Simple.Wpf
             e.Cancel = true;
 
             IDialogService dialogService = ViewModelLocator.Current.Resolve<IDialogService>();
-            bool confirmedExit = await dialogService.ShowMessage("Are you sure to exit?", "Confirm Exit", "Yes", "No", null);
+            bool confirmedExit = await dialogService.ShowMessage(
+                Resource.Strings.Message_ConfirmExit,
+                Resource.Strings.Title_ConfirmExit,
+                Resource.Strings.Button_Yes, 
+                Resource.Strings.Button_No, 
+                null);
             if (confirmedExit)
             {
                 ViewModelLocator.Current.Cleanup();

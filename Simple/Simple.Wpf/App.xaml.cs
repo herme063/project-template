@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading;
+using System.Windows;
 using GalaSoft.MvvmLight.Threading;
 using NLog;
 
