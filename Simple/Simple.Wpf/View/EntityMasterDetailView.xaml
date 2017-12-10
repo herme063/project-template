@@ -84,8 +84,8 @@
                     <StackPanel Orientation="Vertical">
                         <Label Style="{StaticResource FormLabel}"
                                Content="{lex:Loc Label_Name}"
-                               Target="{Binding ElementName=Name}" />
-                        <TextBox x:Name="Name"
+                               Target="{Binding ElementName=NameField}" />
+                        <TextBox x:Name="NameField"
                                  Style="{StaticResource FormField}"
                                  Text="{Binding EditItem.Name, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>

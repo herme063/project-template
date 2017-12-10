@@ -1,15 +1,14 @@
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Views;
+using MvvmValidation;
+using Simple.Wpf.Service;
+using Simple.Wpf.Util;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Threading;
-using GalaSoft.MvvmLight.Views;
-using MvvmValidation;
-using Simple.Wpf.Service;
-using Simple.Wpf.Util;
 
 namespace Simple.Wpf.ViewModel
 {
@@ -78,46 +77,36 @@ namespace Simple.Wpf.ViewModel
 
         private async Task LoadAsync(bool resetEntry = true)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            IsBusy = true;
+
+            List<Model.Entity> entities = await Task.Run(() => _service.AllAsync());
+
+            IsBusy = false;
+
+            Items = new ObservableCollection<EntityObservable>(entities.Select(e => new EntityObservable(e, _service)));
+
+            if (resetEntry)
             {
-                IsBusy = true;
-            });
-
-            List<Model.Entity> entities = await _service.AllAsync();
-
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                IsBusy = false;
-                Items = new ObservableCollection<EntityObservable>(entities.Select(e => new EntityObservable(e, _service)));
-
-                if (resetEntry)
-                {
-                    ValidationSummary = string.Empty;
-                    EditItem = new EntityObservable(_service);
-                }
-            });
+                ValidationSummary = string.Empty;
+                EditItem = new EntityObservable(_service);
+            }
         }
 
         private async Task EditAsync(int itemId)
         {
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                IsBusy = true;
-            });
+            IsBusy = true;
 
-            Model.Entity entity = await _service.GetById(itemId);
+            Model.Entity entity = await Task.Run(() => _service.GetById(itemId));
 
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
-            {
-                IsBusy = false;
-                ValidationSummary = string.Empty;
-                EditItem = new EntityObservable(entity, _service);
-            });
+            IsBusy = false;
+
+            ValidationSummary = string.Empty;
+            EditItem = new EntityObservable(entity, _service);
         }
 
         private async Task NewAsync()
         {
-            if (EditItem?.Id > 0)
+            if (!string.IsNullOrWhiteSpace(EditItem?.Name))
             {
                 bool confirmed = await _dialog.ShowMessage(
                     Resource.Strings.Message_ConfirmDiscard,
@@ -130,6 +119,10 @@ namespace Simple.Wpf.ViewModel
                     await EditAsync(0);
                 }
             }
+            else
+            {
+                await EditAsync(0);
+            }
         }
 
         private async Task SaveAsync()
@@ -139,10 +132,15 @@ namespace Simple.Wpf.ViewModel
             ValidationResult validation = await EditItem.Validate();
             if (validation.IsValid)
             {
+                IsBusy = true;
+
                 var entity = new Model.Entity();
                 EditItem.Apply(ref entity);
 
-                Model.Entity savedEntity = await _service.SaveAsync(entity);
+                Model.Entity savedEntity = await Task.Run(() => _service.SaveAsync(entity));
+
+                IsBusy = false;
+
                 await LoadAsync();
             }
             else
@@ -161,7 +159,12 @@ namespace Simple.Wpf.ViewModel
                 null);
             if (removeConfirmed)
             {
-                await _service.DeleteAsync(id);
+                IsBusy = true;
+
+                await Task.Run(() => _service.DeleteAsync(id));
+
+                IsBusy = false;
+
                 await LoadAsync(false);
             }
         }
@@ -186,7 +189,7 @@ namespace Simple.Wpf.ViewModel
                 Validator.AddRequiredRule(() => Name, Resource.Strings.Message_IsRequired);
                 Validator.AddAsyncRule(() => Name, async () =>
                 { 
-                    bool nameDuplicacy = await _service.NameDuplicateAsync(_id, Name);
+                    bool nameDuplicacy = await Task.Run(() => _service.NameDuplicateAsync(_id, Name));
                     return RuleResult.Assert(!nameDuplicacy, Resource.Strings.Message_AlreadyInUse);
                 });
             }
