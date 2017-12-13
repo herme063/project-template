@@ -96,7 +96,7 @@ namespace Simple.Wpf.ViewModel
         {
             IsBusy = true;
 
-            Model.Entity entity = await Task.Run(() => _service.GetById(itemId));
+            Model.Entity entity = await Task.Run(() => _service.GetByIdAsync(itemId));
 
             IsBusy = false;
 

@@ -30,11 +30,12 @@ namespace Simple.Wpf.Service
         {
             using (var context = new MainDbContext())
             {
-                var s = context.Entities.SingleOrDefault(e => e.Id == entity.Id) ?? context.Entities.Add(new Entity());
+                var s = context.Entities
+                    .SingleOrDefault(e => e.Id == entity.Id) 
+                    ?? context.Entities.Add(new Entity());
                 s.Name = entity.Name;
 
                 await context.SaveChangesAsync();
-                context.Entry(s).State = System.Data.Entity.EntityState.Detached;
 
                 return s;
             }
@@ -48,7 +49,7 @@ namespace Simple.Wpf.Service
             }
         }
 
-        public async Task<Entity> GetById(int entityId)
+        public async Task<Entity> GetByIdAsync(int entityId)
         {
             using (var context = new MainDbContext())
             {
