@@ -156,6 +156,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="Service\IDialogServiceEx.cs" />
     <Compile Include="View\EntityMasterDetailView.xaml.cs">
       <DependentUpon>EntityMasterDetailView.xaml</DependentUpon>
     </Compile>

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using GalaSoft.MvvmLight.Views;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Simple.Wpf.ViewModel;
 
 namespace Simple.Wpf.View
@@ -13,6 +14,8 @@ namespace Simple.Wpf.View
         public MainWindow()
         {
             InitializeComponent();
+            DialogParticipation.SetRegister(this, this);
+            _dialogCoordinator = DialogCoordinator.Instance;
         }
 
         private void ExitMenuClick(object sender, RoutedEventArgs e)

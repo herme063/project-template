@@ -1,104 +1,86 @@
-﻿using System;
+﻿using MahApps.Metro.Controls.Dialogs;
+using Simple.Wpf.Resource;
+using Simple.Wpf.Service;
+using System;
 using System.Threading.Tasks;
-using System.Windows;
-using GalaSoft.MvvmLight.Threading;
-using GalaSoft.MvvmLight.Views;
 
 namespace Simple.Wpf.View
 {
     /// <summary>
-    /// This implementation uses the wpf toolkit message box.
-    /// Which behaves more like a standalone window.
-    /// In order to make the interaction asynchronous we have to resort to this https://sriramsakthivel.wordpress.com/2015/04/19/asynchronous-showdialog/
+    /// This implementation uses the mahapps.metro style message box.
     /// </summary>
-    /// <seealso cref="GalaSoft.MvvmLight.Views.IDialogService" />
-    /// <seealso cref="System.IDisposable" />
-    public partial class MainWindow : IDialogService
+    /// <seealso cref="Simple.Wpf.Service.IDialogServiceEx" />
+    public partial class MainWindow : IDialogServiceEx
     {
-        public Task ShowError(Exception error, string title, string buttonText, Action afterHideCallback)
-        {
-            return ShowError(error.ToString(), title, buttonText, afterHideCallback);
-        }
+        public readonly IDialogCoordinator _dialogCoordinator;
+        public ProgressDialogController _progressDialogController;
 
-        public Task ShowError(string message, string title, string buttonText, Action afterHideCallback)
+        public async Task HideBusy()
         {
-            return DispatcherHelper.UIDispatcher.BeginInvoke(new Action(() =>
+            if (_progressDialogController != null)
             {
-                DialogBox.OkButtonContent = buttonText;
-                DialogBox.ShowMessageBox(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
-            })).Task;
-        }
-
-        public Task ShowMessage(string message, string title)
-        {
-            return ShowMessage(message, title, Resource.Strings.Button_Ok, null);
-        }
-
-        public Task ShowMessage(string message, string title, string buttonText, Action afterHideCallback)
-        {
-            return DispatcherHelper.UIDispatcher.BeginInvoke(new Action(() =>
-            {
-                DialogBox.OkButtonContent = buttonText;
-                DialogBox.ShowMessageBox(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
-            })).Task;
-        }
-
-        public Task<bool> ShowMessage(string message, string title, string buttonConfirmText, string buttonCancelText, Action<bool> afterHideCallback)
-        {
-            // async context
-            var context = new MessageBoxAsyncContext
-            {
-                AsyncCompletion = new TaskCompletionSource<bool>(),
-                AfterHideCallback = afterHideCallback
-            };
-
-            if (DialogBox.Tag is MessageBoxAsyncContext)
-            {
-                // cancel unfinished business
-                ((MessageBoxAsyncContext)DialogBox.Tag).AsyncCompletion.TrySetCanceled();
-                ((MessageBoxAsyncContext)DialogBox.Tag).AfterHideCallback?.Invoke(false);
+                await _progressDialogController.CloseAsync();
+                _progressDialogController = null;
             }
+        }
 
-            DialogBox.Tag = context;
+        public async Task ShowBusy()
+        {
+            await ShowBusy(Strings.Message_Loading);
+        }
 
-            // UI
-            DispatcherHelper.CheckBeginInvokeOnUI(() => {
-                DialogBox.YesButtonContent = buttonConfirmText ?? Resource.Strings.Button_Yes;
-                DialogBox.NoButtonContent = buttonCancelText ?? Resource.Strings.Button_No;
-                DialogBox.ShowMessageBox(
-                    message, 
-                    title, 
-                    MessageBoxButton.YesNo, 
-                    MessageBoxImage.Question, 
-                    MessageBoxResult.Yes);
+        public async Task ShowBusy(string message)
+        {
+            _progressDialogController = await _dialogCoordinator.ShowProgressAsync(this, message, string.Empty);
+            _progressDialogController.SetIndeterminate();
+        }
+
+        public async Task ShowError(Exception error, string title, string buttonText, Action afterHideCallback)
+        {
+            await ShowError(error.ToString(), title, buttonText, afterHideCallback);
+        }
+
+        public async Task ShowError(string message, string title, string buttonText, Action afterHideCallback)
+        {
+            await _dialogCoordinator.ShowMessageAsync(this, title, message, MessageDialogStyle.Affirmative, new MetroDialogSettings
+            {
+                AffirmativeButtonText = buttonText,
+                ColorScheme = MetroDialogColorScheme.Accented
+            });
+        }
+
+        public async Task ShowMessage(string message, string title)
+        {
+            await ShowMessage(message, title, Strings.Button_Ok, null);
+        }
+
+        public async Task ShowMessage(string message, string title, string buttonText, Action afterHideCallback)
+        {
+            await _dialogCoordinator.ShowMessageAsync(this, title, message, MessageDialogStyle.Affirmative, new MetroDialogSettings
+            {
+                AffirmativeButtonText = buttonText ?? Strings.Button_Ok,
+                ColorScheme = MetroDialogColorScheme.Theme
+            });
+        }
+
+        public async Task<bool> ShowMessage(string message, string title, string buttonConfirmText, string buttonCancelText, Action<bool> afterHideCallback)
+        {
+            MessageDialogResult result = await _dialogCoordinator.ShowMessageAsync(this, title, message, MessageDialogStyle.AffirmativeAndNegative, new MetroDialogSettings
+            {
+                AffirmativeButtonText = buttonConfirmText ?? Strings.Button_Yes,
+                NegativeButtonText = buttonCancelText ?? Strings.Button_No,
+                ColorScheme = MetroDialogColorScheme.Theme
             });
 
-            EventHandler handler = null;
-            handler = (s, e) =>
-            {
-                var msgBox = (s as Xceed.Wpf.Toolkit.MessageBox);
-                msgBox.Closed -= handler;
+            bool affirmative = result == MessageDialogResult.Affirmative;
+            afterHideCallback?.Invoke(affirmative);
 
-                bool confirmed = msgBox.MessageBoxResult == MessageBoxResult.Yes;
-                var ctx = msgBox.Tag as MessageBoxAsyncContext;
-                ctx?.AfterHideCallback?.Invoke(confirmed);
-                ctx?.AsyncCompletion.TrySetResult(confirmed);
-            };
-
-            DialogBox.Closed += handler;
-
-            return context.AsyncCompletion.Task;
+            return affirmative;
         }
 
         public Task ShowMessageBox(string message, string title)
         {
             return ShowMessage(message, title);
-        }
-
-        private class MessageBoxAsyncContext
-        {
-            public Action<bool> AfterHideCallback { get; set; }
-            public TaskCompletionSource<bool> AsyncCompletion { get; set; }
         }
     }
 }

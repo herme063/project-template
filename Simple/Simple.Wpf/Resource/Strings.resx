@@ -120,64 +120,70 @@
   <data name="Button_New" xml:space="preserve">
     <value>New</value>
   </data>
-    <data name="Button_No" xml:space="preserve">
+  <data name="Button_No" xml:space="preserve">
     <value>No</value>
   </data>
-    <data name="Button_Ok" xml:space="preserve">
+  <data name="Button_Ok" xml:space="preserve">
     <value>Ok</value>
   </data>
-    <data name="Button_Save" xml:space="preserve">
+  <data name="Button_Save" xml:space="preserve">
     <value>Save</value>
   </data>
-    <data name="Button_Yes" xml:space="preserve">
+  <data name="Button_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
-    <data name="Hint_Edit" xml:space="preserve">
+  <data name="Hint_Edit" xml:space="preserve">
     <value>Edit</value>
   </data>
-    <data name="Hint_Remove" xml:space="preserve">
+  <data name="Hint_Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
-    <data name="Label_Attributes" xml:space="preserve">
+  <data name="Label_Attributes" xml:space="preserve">
     <value>Attributes</value>
   </data>
-    <data name="Label_Name" xml:space="preserve">
+  <data name="Label_Name" xml:space="preserve">
     <value>Name</value>
   </data>
-    <data name="Menu_Exit" xml:space="preserve">
+  <data name="Menu_Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
-    <data name="Menu_File" xml:space="preserve">
+  <data name="Menu_File" xml:space="preserve">
     <value>File</value>
   </data>
-    <data name="Message_AlreadyInUse" xml:space="preserve">
+  <data name="Message_AlreadyInUse" xml:space="preserve">
     <value>already in use</value>
   </data>
-    <data name="Message_ConfirmDelete" xml:space="preserve">
+  <data name="Message_ConfirmDelete" xml:space="preserve">
     <value>Are you sure to delete?</value>
   </data>
-    <data name="Message_ConfirmDiscard" xml:space="preserve">
+  <data name="Message_ConfirmDiscard" xml:space="preserve">
     <value>Are you sure to discard the changes?</value>
   </data>
-    <data name="Message_ConfirmExit" xml:space="preserve">
+  <data name="Message_ConfirmExit" xml:space="preserve">
     <value>Are you sure to exit?</value>
   </data>
-    <data name="Message_IsRequired" xml:space="preserve">
+  <data name="Message_IsRequired" xml:space="preserve">
     <value>is required</value>
   </data>
-    <data name="Message_Loading" xml:space="preserve">
+  <data name="Message_Loading" xml:space="preserve">
     <value>Loading...</value>
   </data>
-    <data name="Title_Application" xml:space="preserve">
+  <data name="Message_Removing" xml:space="preserve">
+    <value>Removing...</value>
+  </data>
+  <data name="Message_Saving" xml:space="preserve">
+    <value>Saving...</value>
+  </data>
+  <data name="Title_Application" xml:space="preserve">
     <value>Simple Application</value>
   </data>
-    <data name="Title_ConfirmDelete" xml:space="preserve">
+  <data name="Title_ConfirmDelete" xml:space="preserve">
     <value>Confirm Deletion</value>
   </data>
-    <data name="Title_ConfirmDiscard" xml:space="preserve">
+  <data name="Title_ConfirmDiscard" xml:space="preserve">
     <value>Confirm Discard</value>
   </data>
-    <data name="Title_ConfirmExit" xml:space="preserve">
+  <data name="Title_ConfirmExit" xml:space="preserve">
     <value>Confirm Exit</value>
   </data>
 </root>

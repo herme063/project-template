@@ -1,7 +1,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
-using GalaSoft.MvvmLight.Views;
 using MvvmValidation;
+using Simple.Wpf.Resource;
 using Simple.Wpf.Service;
 using Simple.Wpf.Util;
 using System.Collections.Generic;
@@ -15,8 +15,7 @@ namespace Simple.Wpf.ViewModel
     public class EntityMasterDetailViewModel : ViewModelBase
     {
         private readonly IEntityService _service;
-        private readonly IDialogService _dialog;
-        private bool _isBusy;
+        private readonly IDialogServiceEx _dialog;
         private EntityObservable _editItem;
         private ObservableCollection<EntityObservable> _items;
         private string _validationSummary;
@@ -44,12 +43,6 @@ namespace Simple.Wpf.ViewModel
             set { Set(() => ValidationSummary, ref _validationSummary, value); }
         }
 
-        public bool IsBusy
-        {
-            get { return _isBusy; }
-            set { Set(() => IsBusy, ref _isBusy, value); }
-        }
-
         public ICommand SaveCommand => _saveCommand ?? (_saveCommand = new RelayCommand(async () => await SaveAsync()));
 
         public ICommand RemoveCommand => _removeCommand ?? (_removeCommand = new RelayCommand<int>(async (id) => await RemoveAsync(id)));
@@ -61,7 +54,7 @@ namespace Simple.Wpf.ViewModel
         public ICommand NewCommand => _newCommand ?? (_newCommand = new RelayCommand(async () => await NewAsync()));
 
         public EntityMasterDetailViewModel(
-            IDialogService dialog,
+            IDialogServiceEx dialog,
             IEntityService service)
         {
             _service = service;
@@ -77,11 +70,11 @@ namespace Simple.Wpf.ViewModel
 
         private async Task LoadAsync(bool resetEntry = true)
         {
-            IsBusy = true;
+            await _dialog.ShowBusy();
 
             List<Model.Entity> entities = await Task.Run(() => _service.AllAsync());
 
-            IsBusy = false;
+            await _dialog.HideBusy();
 
             Items = new ObservableCollection<EntityObservable>(entities.Select(e => new EntityObservable(e, _service)));
 
@@ -94,11 +87,11 @@ namespace Simple.Wpf.ViewModel
 
         private async Task EditAsync(int itemId)
         {
-            IsBusy = true;
+            await _dialog.ShowBusy();
 
             Model.Entity entity = await Task.Run(() => _service.GetByIdAsync(itemId));
 
-            IsBusy = false;
+            await _dialog.HideBusy();
 
             ValidationSummary = string.Empty;
             EditItem = new EntityObservable(entity, _service);
@@ -109,10 +102,10 @@ namespace Simple.Wpf.ViewModel
             if (!string.IsNullOrWhiteSpace(EditItem?.Name))
             {
                 bool confirmed = await _dialog.ShowMessage(
-                    Resource.Strings.Message_ConfirmDiscard,
-                    Resource.Strings.Title_ConfirmDiscard,
-                    Resource.Strings.Button_Yes,
-                    Resource.Strings.Button_No, 
+                    Strings.Message_ConfirmDiscard,
+                    Strings.Title_ConfirmDiscard,
+                    Strings.Button_Yes,
+                    Strings.Button_No, 
                     null);
                 if (confirmed)
                 {
@@ -132,14 +125,14 @@ namespace Simple.Wpf.ViewModel
             ValidationResult validation = await EditItem.Validate();
             if (validation.IsValid)
             {
-                IsBusy = true;
+                await _dialog.ShowBusy(Strings.Message_Saving);
 
                 var entity = new Model.Entity();
                 EditItem.Apply(ref entity);
 
                 Model.Entity savedEntity = await Task.Run(() => _service.SaveAsync(entity));
 
-                IsBusy = false;
+                await _dialog.HideBusy();
 
                 await LoadAsync();
             }
@@ -152,18 +145,18 @@ namespace Simple.Wpf.ViewModel
         private async Task RemoveAsync(int id)
         {
             bool removeConfirmed = await _dialog.ShowMessage(
-                Resource.Strings.Message_ConfirmDelete,
-                Resource.Strings.Title_ConfirmDelete,
-                Resource.Strings.Button_Yes,
-                Resource.Strings.Button_No,
+                Strings.Message_ConfirmDelete,
+                Strings.Title_ConfirmDelete,
+                Strings.Button_Yes,
+                Strings.Button_No,
                 null);
             if (removeConfirmed)
             {
-                IsBusy = true;
+                await _dialog.ShowBusy(Strings.Message_Removing);
 
                 await Task.Run(() => _service.DeleteAsync(id));
 
-                IsBusy = false;
+                await _dialog.HideBusy();
 
                 await LoadAsync(false);
             }

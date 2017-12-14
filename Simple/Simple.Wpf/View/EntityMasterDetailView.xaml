@@ -18,81 +18,78 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
 
-    <xctk:BusyIndicator IsBusy="{Binding IsBusy}"
-                        BusyContent="{lex:Loc Message_Loading}">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="5" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
 
-            <DataGrid Grid.Column="0" 
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      ItemsSource="{Binding Items}">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="X"
-                                            Padding="2 1 2 1"
-                                            Margin="0 0 2 0"
-                                            Width="25"
-                                            ToolTip="{lex:Loc Hint_Remove}"
-                                            Command="{Binding EntityMasterDetail.RemoveCommand, Source={StaticResource Locator}}"
-                                            CommandParameter="{Binding Id}" />
-                                    <Button Content="E"
-                                            Padding="2 1 2 1"
-                                            Width="25"
-                                            ToolTip="{lex:Loc Hint_Edit}"
-                                            Command="{Binding EntityMasterDetail.EditCommand, Source={StaticResource Locator}}"
-                                            CommandParameter="{Binding Id}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="{lex:Loc Label_Name}"
-                                        Binding="{Binding Name}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+        <DataGrid Grid.Column="0" 
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Items}">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="X"
+                                        Padding="2 1 2 1"
+                                        Margin="0 0 2 0"
+                                        Width="25"
+                                        ToolTip="{lex:Loc Hint_Remove}"
+                                        Command="{Binding EntityMasterDetail.RemoveCommand, Source={StaticResource Locator}}"
+                                        CommandParameter="{Binding Id}" />
+                                <Button Content="E"
+                                        Padding="2 1 2 1"
+                                        Width="25"
+                                        ToolTip="{lex:Loc Hint_Edit}"
+                                        Command="{Binding EntityMasterDetail.EditCommand, Source={StaticResource Locator}}"
+                                        CommandParameter="{Binding Id}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{lex:Loc Label_Name}"
+                                    Binding="{Binding Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
-            <GridSplitter Grid.Column="1" 
-                          Width="5"
-                          HorizontalAlignment="Stretch" />
+        <GridSplitter Grid.Column="1" 
+                        Width="5"
+                        HorizontalAlignment="Stretch" />
 
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" 
-                          Header="{lex:Loc Label_Attributes}">
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="{lex:Loc Label_Name}"
-                               Target="{Binding ElementName=NameField}" />
-                        <TextBox x:Name="NameField"
-                                 Text="{Binding EditItem.Name, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                </GroupBox>
-
-                <xctk:RichTextBox Grid.Row="1"
-                                  Style="{StaticResource FormValidationSummary}"
-                                  Text="{Binding ValidationSummary}"/>
-
-                <StackPanel Grid.Row="2"
-                            Orientation="Horizontal"
-                            Margin="2">
-                    <Button Content="{lex:Loc Button_Save}"
-                            Margin="0 0 2 0"
-                            Command="{Binding EntityMasterDetail.SaveCommand, Source={StaticResource Locator}}" />
-                    <Button Content="{lex:Loc Button_New}"
-                            Command="{Binding EntityMasterDetail.NewCommand, Source={StaticResource Locator}}" />
+            <GroupBox Grid.Row="0" 
+                        Header="{lex:Loc Label_Attributes}">
+                <StackPanel Orientation="Vertical">
+                    <Label Content="{lex:Loc Label_Name}"
+                            Target="{Binding ElementName=NameField}" />
+                    <TextBox x:Name="NameField"
+                                Text="{Binding EditItem.Name, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
-            </Grid>
+            </GroupBox>
+
+            <xctk:RichTextBox Grid.Row="1"
+                                Style="{StaticResource FormValidationSummary}"
+                                Text="{Binding ValidationSummary}"/>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        Margin="2">
+                <Button Content="{lex:Loc Button_Save}"
+                        Margin="0 0 2 0"
+                        Command="{Binding EntityMasterDetail.SaveCommand, Source={StaticResource Locator}}" />
+                <Button Content="{lex:Loc Button_New}"
+                        Command="{Binding EntityMasterDetail.NewCommand, Source={StaticResource Locator}}" />
+            </StackPanel>
         </Grid>
-    </xctk:BusyIndicator>
+    </Grid>
 </UserControl>

@@ -40,6 +40,7 @@ namespace Simple.Wpf.ViewModel
             _niContainer = new StandardKernel();
             _niContainer.Bind<MainWindow>().ToConstant(mainWindow);
             _niContainer.Bind<IDialogService>().ToConstant(mainWindow);
+            _niContainer.Bind<IDialogServiceEx>().ToConstant(mainWindow);
             _niContainer.Bind<ILogger>().ToMethod(_ => LogManager.GetLogger("Main"));
             _niContainer.Bind<IMessenger>().ToConstant(Messenger.Default);
             _niContainer.Bind<IEntityService>().To<EntityService>();
